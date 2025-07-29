@@ -96,6 +96,8 @@ export const Marble = ({
   className = "",
   variant = "primary",
   animated = false,
+  borderWidth = 30,
+  borderColor = "rgba(255, 255, 255, 1)",
 }: MarbleProps) => {
   const numericSeed = React.useMemo(() => stringToHash(seed), [seed]);
   const bubbles = React.useMemo(
@@ -259,23 +261,27 @@ export const Marble = ({
           )}
         </ellipse>
 
-        {/* Enhanced white border effect */}
-        <circle
-          cx="50"
-          cy="50"
-          r="49"
-          fill="none"
-          stroke="rgba(255, 255, 255, 1)"
-          strokeWidth="30"
-        />
-        <circle
-          cx="50"
-          cy="50"
-          r="47.5"
-          fill="none"
-          stroke="rgba(255, 255, 255, 0.4)"
-          strokeWidth="1"
-        />
+        {/* Enhanced border effect */}
+        {borderWidth > 0 && (
+          <>
+            <circle
+              cx="50"
+              cy="50"
+              r="49"
+              fill="none"
+              stroke={borderColor}
+              strokeWidth={borderWidth}
+            />
+            <circle
+              cx="50"
+              cy="50"
+              r="47.5"
+              fill="none"
+              stroke="rgba(255, 255, 255, 0.4)"
+              strokeWidth="1"
+            />
+          </>
+        )}
       </svg>
     </div>
   );

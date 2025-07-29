@@ -1,6 +1,6 @@
 {
-  "name": "marbles",
-  "version": "1.0.0",
+  "name": "@noodleseed/marbles",
+  "version": "1.1.0",
   "type": "module",
   "description": "Beautiful animated marble/bubble gradient components for React",
   "main": "dist/index.cjs",
@@ -44,10 +44,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/NoodleSeed-com/marbles.git"
+    "url": "git+https://github.com/NoodleSeed-com/noodle-marbles.git"
   },
-  "homepage": "https://github.com/NoodleSeed-com/marbles#readme",
+  "homepage": "https://github.com/NoodleSeed-com/noodle-marbles#readme",
   "bugs": {
-    "url": "https://github.com/NoodleSeed-com/marbles/issues"
+    "url": "https://github.com/NoodleSeed-com/noodle-marbles/issues"
   }
 }

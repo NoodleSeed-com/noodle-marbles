@@ -75,7 +75,7 @@ const generateHighlight = (seed) => {
         opacity: rng.range(0.6, 0.8), // More prominent opacity
     };
 };
-const Marble = ({ size = 100, seed = "default", className = "", variant = "primary", animated = false, }) => {
+const Marble = ({ size = 100, seed = "default", className = "", variant = "primary", animated = false, borderWidth = 30, borderColor = "rgba(255, 255, 255, 1)", }) => {
     const numericSeed = React.useMemo(() => stringToHash(seed), [seed]);
     const bubbles = React.useMemo(() => generateBubbles(numericSeed, variant), [numericSeed, variant]);
     const highlight = React.useMemo(() => generateHighlight(numericSeed), [numericSeed]);
@@ -110,8 +110,9 @@ const Marble = ({ size = 100, seed = "default", className = "", variant = "prima
                 } }, animated && (React.createElement(React.Fragment, null,
                 React.createElement("animateTransform", { attributeName: "transform", type: "translate", values: `0,0; ${highlight.cx > 50 ? -3 : 3},${highlight.cy > 50 ? -2.5 : 2.5}; 0,0`, dur: "5s", begin: "0.5s", repeatCount: "indefinite", calcMode: "spline", keySplines: "0.4 0 0.6 1; 0.4 0 0.6 1", keyTimes: "0; 0.5; 1" }),
                 React.createElement("animate", { attributeName: "opacity", values: `0.2; ${highlight.opacity}; 0.2`, dur: "3s", begin: "0s", repeatCount: "indefinite" })))),
-            React.createElement("circle", { cx: "50", cy: "50", r: "49", fill: "none", stroke: "rgba(255, 255, 255, 1)", strokeWidth: "30" }),
-            React.createElement("circle", { cx: "50", cy: "50", r: "47.5", fill: "none", stroke: "rgba(255, 255, 255, 0.4)", strokeWidth: "1" }))));
+            borderWidth > 0 && (React.createElement(React.Fragment, null,
+                React.createElement("circle", { cx: "50", cy: "50", r: "49", fill: "none", stroke: borderColor, strokeWidth: borderWidth }),
+                React.createElement("circle", { cx: "50", cy: "50", r: "47.5", fill: "none", stroke: "rgba(255, 255, 255, 0.4)", strokeWidth: "1" }))))));
 };
 
 export { Marble };

@@ -41,17 +41,34 @@ import { Marble } from 'marbles'
   variant="tertiary"
   animated={true}
 />
+
+// Custom border styling
+<Marble
+  seed="custom-border"
+  size={120}
+  borderWidth={15}
+  borderColor="#ff6b6b"
+/>
+
+// No border
+<Marble
+  seed="no-border"
+  size={100}
+  borderWidth={0}
+/>
 ```
 
 ## Props
 
-| Prop        | Type                                     | Default     | Description                              |
-| ----------- | ---------------------------------------- | ----------- | ---------------------------------------- |
-| `size`      | `number`                                 | `100`       | Size of the marble in pixels             |
-| `seed`      | `string`                                 | `"default"` | Seed string for deterministic generation |
-| `className` | `string`                                 | `""`        | Additional CSS classes to apply          |
-| `variant`   | `"primary" \| "secondary" \| "tertiary"` | `"primary"` | Color variant to use                     |
-| `animated`  | `boolean`                                | `false`     | Whether to enable gentle animations      |
+| Prop          | Type                                     | Default                    | Description                                |
+| ------------- | ---------------------------------------- | -------------------------- | ------------------------------------------ |
+| `size`        | `number`                                 | `100`                      | Size of the marble in pixels               |
+| `seed`        | `string`                                 | `"default"`                | Seed string for deterministic generation   |
+| `className`   | `string`                                 | `""`                       | Additional CSS classes to apply            |
+| `variant`     | `"primary" \| "secondary" \| "tertiary"` | `"primary"`                | Color variant to use                       |
+| `animated`    | `boolean`                                | `false`                    | Whether to enable gentle animations        |
+| `borderWidth` | `number`                                 | `30`                       | Width of the border (0-30, 0 = no border)  |
+| `borderColor` | `string`                                 | `"rgba(255, 255, 255, 1)"` | Color of the border (any CSS color format) |
 
 ## Color Variants
 
@@ -126,6 +143,28 @@ const ProfileGallery = ({ users }) => (
     ))}
   </div>
 );
+```
+
+### Border Customization
+
+Control the border appearance with `borderWidth` and `borderColor`:
+
+```tsx
+// Thin colored borders
+<Marble seed="thin-blue" borderWidth={10} borderColor="#3b82f6" />
+<Marble seed="thin-green" borderWidth={10} borderColor="#10b981" />
+
+// Medium borders with transparency
+<Marble seed="medium-red" borderWidth={20} borderColor="rgba(239, 68, 68, 0.8)" />
+
+// Thick gold border
+<Marble seed="thick-gold" borderWidth={25} borderColor="#f59e0b" />
+
+// No border for clean look
+<Marble seed="clean" borderWidth={0} />
+
+// Gradient-like effect with semi-transparent colors
+<Marble seed="gradient" borderWidth={15} borderColor="rgba(139, 92, 246, 0.6)" />
 ```
 
 ## TypeScript
