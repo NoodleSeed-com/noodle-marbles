@@ -96,10 +96,16 @@ export const Marble = ({
   className = "",
   variant = "primary",
   animated = false,
+  rotate = false,
   borderWidth = 30,
   borderColor = "rgba(255, 255, 255, 1)",
 }: MarbleProps) => {
-  const numericSeed = React.useMemo(() => stringToHash(seed), [seed]);
+  // Sanitize seed by replacing spaces with dashes to prevent SVG ID issues
+  const sanitizedSeed = React.useMemo(() => seed.replace(/\s+/g, "-"), [seed]);
+  const numericSeed = React.useMemo(
+    () => stringToHash(sanitizedSeed),
+    [sanitizedSeed]
+  );
   const bubbles = React.useMemo(
     () => generateBubbles(numericSeed, variant),
     [numericSeed, variant]
@@ -152,7 +158,7 @@ export const Marble = ({
 
           {/* Base gradient for overall cohesion */}
           <radialGradient
-            id={`base-gradient-${seed}`}
+            id={`base-gradient-${sanitizedSeed}`}
             cx="50%"
             cy="50%"
             r="50%"
@@ -177,111 +183,129 @@ export const Marble = ({
           </radialGradient>
         </defs>
 
-        {/* Background circle */}
-        <circle
-          cx="50"
-          cy="50"
-          r="50"
-          fill={
-            variant === "primary"
-              ? "#e0f7fa"
-              : variant === "secondary"
-              ? "#fce4ec"
-              : "#f3e5f5"
-          }
-        />
+        {/* Group wrapper for rotation animation */}
+        <g>
+          {rotate && (
+            <animateTransform
+              attributeName="transform"
+              type="rotate"
+              values="0 50 50; 360 50 50"
+              dur="4s"
+              repeatCount="indefinite"
+            />
+          )}
 
-        {/* Render bubbles */}
-        {bubbles.map((bubble) => (
+          {/* Background circle */}
           <circle
-            key={bubble.id}
-            cx={bubble.cx}
-            cy={bubble.cy}
-            r={bubble.r}
-            fill={`url(#${bubble.id})`}
+            cx="50"
+            cy="50"
+            r="50"
+            fill={
+              variant === "primary"
+                ? "#e0f7fa"
+                : variant === "secondary"
+                ? "#fce4ec"
+                : "#f3e5f5"
+            }
+          />
+
+          {/* Render bubbles */}
+          {bubbles.map((bubble) => (
+            <circle
+              key={bubble.id}
+              cx={bubble.cx}
+              cy={bubble.cy}
+              r={bubble.r}
+              fill={`url(#${bubble.id})`}
+              style={{
+                mixBlendMode: "multiply",
+              }}
+            >
+              {animated && (
+                <animateTransform
+                  attributeName="transform"
+                  type="translate"
+                  values={`0,0; ${bubble.cx > 50 ? -5 : 5},${
+                    bubble.cy > 50 ? -4 : 4
+                  }; 0,0`}
+                  dur={`${bubble.animationDuration}s`}
+                  begin={`${bubble.animationDelay}s`}
+                  repeatCount="indefinite"
+                  calcMode="spline"
+                  keySplines="0.4 0 0.6 1; 0.4 0 0.6 1"
+                  keyTimes="0; 0.5; 1"
+                />
+              )}
+            </circle>
+          ))}
+
+          {/* Overlay for subtle highlight */}
+          <circle
+            cx="50"
+            cy="50"
+            r="50"
+            fill={`url(#base-gradient-${sanitizedSeed})`}
+          />
+
+          {/* Dynamic white highlight blob */}
+          <ellipse
+            cx={highlight.cx}
+            cy={highlight.cy}
+            rx={highlight.rx}
+            ry={highlight.ry}
+            fill={`url(#${highlight.id})`}
             style={{
-              mixBlendMode: "multiply",
+              mixBlendMode: "screen",
             }}
           >
             {animated && (
-              <animateTransform
-                attributeName="transform"
-                type="translate"
-                values={`0,0; ${bubble.cx > 50 ? -5 : 5},${
-                  bubble.cy > 50 ? -4 : 4
-                }; 0,0`}
-                dur={`${bubble.animationDuration}s`}
-                begin={`${bubble.animationDelay}s`}
-                repeatCount="indefinite"
-                calcMode="spline"
-                keySplines="0.4 0 0.6 1; 0.4 0 0.6 1"
-                keyTimes="0; 0.5; 1"
-              />
+              <>
+                <animateTransform
+                  attributeName="transform"
+                  type="translate"
+                  values={`0,0; ${highlight.cx > 50 ? -3 : 3},${
+                    highlight.cy > 50 ? -2.5 : 2.5
+                  }; 0,0`}
+                  dur="5s"
+                  begin="0.5s"
+                  repeatCount="indefinite"
+                  calcMode="spline"
+                  keySplines="0.4 0 0.6 1; 0.4 0 0.6 1"
+                  keyTimes="0; 0.5; 1"
+                />
+                <animate
+                  attributeName="opacity"
+                  values={`0.2; ${highlight.opacity}; 0.2`}
+                  dur="3s"
+                  begin="0s"
+                  repeatCount="indefinite"
+                />
+              </>
             )}
-          </circle>
-        ))}
+          </ellipse>
 
-        {/* Overlay for subtle highlight */}
-        <circle cx="50" cy="50" r="50" fill={`url(#base-gradient-${seed})`} />
-
-        {/* Dynamic white highlight blob */}
-        <ellipse
-          cx={highlight.cx}
-          cy={highlight.cy}
-          rx={highlight.rx}
-          ry={highlight.ry}
-          fill={`url(#${highlight.id})`}
-          style={{
-            mixBlendMode: "screen",
-          }}
-        >
-          {animated && (
+          {/* Enhanced border effect */}
+          {borderWidth > 0 && (
             <>
-              <animateTransform
-                attributeName="transform"
-                type="translate"
-                values={`0,0; ${highlight.cx > 50 ? -3 : 3},${
-                  highlight.cy > 50 ? -2.5 : 2.5
-                }; 0,0`}
-                dur="5s"
-                begin="0.5s"
-                repeatCount="indefinite"
-                calcMode="spline"
-                keySplines="0.4 0 0.6 1; 0.4 0 0.6 1"
-                keyTimes="0; 0.5; 1"
+              <circle
+                cx="50"
+                cy="50"
+                r="49"
+                fill="none"
+                stroke={borderColor}
+                strokeWidth={borderWidth}
               />
-              <animate
-                attributeName="opacity"
-                values={`0.2; ${highlight.opacity}; 0.2`}
-                dur="3s"
-                begin="0s"
-                repeatCount="indefinite"
+              <circle
+                cx="50"
+                cy="50"
+                r="47.5"
+                fill="none"
+                stroke="rgba(255, 255, 255, 0.4)"
+                strokeWidth="1"
               />
             </>
           )}
-        </ellipse>
-
-        {/* Enhanced border effect */}
-        {borderWidth > 0 && (
-          <>
-            <circle
-              cx="50"
-              cy="50"
-              r="49"
-              fill="none"
-              stroke={borderColor}
-              strokeWidth={borderWidth}
-            />
-            <circle
-              cx="50"
-              cy="50"
-              r="47.5"
-              fill="none"
-              stroke="rgba(255, 255, 255, 0.4)"
-              strokeWidth="1"
-            />
-          </>
-        )}
+        </g>
       </svg>
     </div>
   );

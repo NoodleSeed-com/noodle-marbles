@@ -12,6 +12,8 @@ export interface MarbleProps {
     variant?: "primary" | "secondary" | "tertiary";
     /** Whether to enable gentle animations (default: false) */
     animated?: boolean;
+    /** Whether to enable spinning rotation animation (default: false) */
+    rotate?: boolean;
     /** Width of the border around the marble (0-30, default: 30) */
     borderWidth?: number;
     /** Color of the border around the marble (default: "rgba(255, 255, 255, 1)") */

@@ -75,8 +75,10 @@ const generateHighlight = (seed) => {
         opacity: rng.range(0.6, 0.8), // More prominent opacity
     };
 };
-const Marble = ({ size = 100, seed = "default", className = "", variant = "primary", animated = false, borderWidth = 30, borderColor = "rgba(255, 255, 255, 1)", }) => {
-    const numericSeed = React.useMemo(() => stringToHash(seed), [seed]);
+const Marble = ({ size = 100, seed = "default", className = "", variant = "primary", animated = false, rotate = false, borderWidth = 30, borderColor = "rgba(255, 255, 255, 1)", }) => {
+    // Sanitize seed by replacing spaces with dashes to prevent SVG ID issues
+    const sanitizedSeed = React.useMemo(() => seed.replace(/\s+/g, "-"), [seed]);
+    const numericSeed = React.useMemo(() => stringToHash(sanitizedSeed), [sanitizedSeed]);
     const bubbles = React.useMemo(() => generateBubbles(numericSeed, variant), [numericSeed, variant]);
     const highlight = React.useMemo(() => generateHighlight(numericSeed), [numericSeed]);
     return (React.createElement("div", { className: clsx("relative overflow-hidden rounded-full", className), style: {
@@ -89,30 +91,32 @@ const Marble = ({ size = 100, seed = "default", className = "", variant = "prima
                     React.createElement("stop", { offset: "0%", stopColor: bubble.colors[0], stopOpacity: bubble.opacity }),
                     React.createElement("stop", { offset: "40%", stopColor: bubble.colors[1], stopOpacity: bubble.opacity * 0.7 }),
                     React.createElement("stop", { offset: "100%", stopColor: bubble.colors[2], stopOpacity: bubble.opacity * 0.3 })))),
-                React.createElement("radialGradient", { id: `base-gradient-${seed}`, cx: "50%", cy: "50%", r: "50%" },
+                React.createElement("radialGradient", { id: `base-gradient-${sanitizedSeed}`, cx: "50%", cy: "50%", r: "50%" },
                     React.createElement("stop", { offset: "0%", stopColor: "#ffffff", stopOpacity: "0.4" }),
                     React.createElement("stop", { offset: "100%", stopColor: "#f8fafc", stopOpacity: "0.1" })),
                 React.createElement("radialGradient", { id: highlight.id, cx: "50%", cy: "30%", r: "80%" },
                     React.createElement("stop", { offset: "0%", stopColor: "#ffffff", stopOpacity: highlight.opacity }),
                     React.createElement("stop", { offset: "60%", stopColor: "#ffffff", stopOpacity: highlight.opacity * 0.5 }),
                     React.createElement("stop", { offset: "100%", stopColor: "#ffffff", stopOpacity: "0" }))),
-            React.createElement("circle", { cx: "50", cy: "50", r: "50", fill: variant === "primary"
-                    ? "#e0f7fa"
-                    : variant === "secondary"
-                        ? "#fce4ec"
-                        : "#f3e5f5" }),
-            bubbles.map((bubble) => (React.createElement("circle", { key: bubble.id, cx: bubble.cx, cy: bubble.cy, r: bubble.r, fill: `url(#${bubble.id})`, style: {
-                    mixBlendMode: "multiply",
-                } }, animated && (React.createElement("animateTransform", { attributeName: "transform", type: "translate", values: `0,0; ${bubble.cx > 50 ? -5 : 5},${bubble.cy > 50 ? -4 : 4}; 0,0`, dur: `${bubble.animationDuration}s`, begin: `${bubble.animationDelay}s`, repeatCount: "indefinite", calcMode: "spline", keySplines: "0.4 0 0.6 1; 0.4 0 0.6 1", keyTimes: "0; 0.5; 1" }))))),
-            React.createElement("circle", { cx: "50", cy: "50", r: "50", fill: `url(#base-gradient-${seed})` }),
-            React.createElement("ellipse", { cx: highlight.cx, cy: highlight.cy, rx: highlight.rx, ry: highlight.ry, fill: `url(#${highlight.id})`, style: {
-                    mixBlendMode: "screen",
-                } }, animated && (React.createElement(React.Fragment, null,
-                React.createElement("animateTransform", { attributeName: "transform", type: "translate", values: `0,0; ${highlight.cx > 50 ? -3 : 3},${highlight.cy > 50 ? -2.5 : 2.5}; 0,0`, dur: "5s", begin: "0.5s", repeatCount: "indefinite", calcMode: "spline", keySplines: "0.4 0 0.6 1; 0.4 0 0.6 1", keyTimes: "0; 0.5; 1" }),
-                React.createElement("animate", { attributeName: "opacity", values: `0.2; ${highlight.opacity}; 0.2`, dur: "3s", begin: "0s", repeatCount: "indefinite" })))),
-            borderWidth > 0 && (React.createElement(React.Fragment, null,
-                React.createElement("circle", { cx: "50", cy: "50", r: "49", fill: "none", stroke: borderColor, strokeWidth: borderWidth }),
-                React.createElement("circle", { cx: "50", cy: "50", r: "47.5", fill: "none", stroke: "rgba(255, 255, 255, 0.4)", strokeWidth: "1" }))))));
+            React.createElement("g", null,
+                rotate && (React.createElement("animateTransform", { attributeName: "transform", type: "rotate", values: "0 50 50; 360 50 50", dur: "4s", repeatCount: "indefinite" })),
+                React.createElement("circle", { cx: "50", cy: "50", r: "50", fill: variant === "primary"
+                        ? "#e0f7fa"
+                        : variant === "secondary"
+                            ? "#fce4ec"
+                            : "#f3e5f5" }),
+                bubbles.map((bubble) => (React.createElement("circle", { key: bubble.id, cx: bubble.cx, cy: bubble.cy, r: bubble.r, fill: `url(#${bubble.id})`, style: {
+                        mixBlendMode: "multiply",
+                    } }, animated && (React.createElement("animateTransform", { attributeName: "transform", type: "translate", values: `0,0; ${bubble.cx > 50 ? -5 : 5},${bubble.cy > 50 ? -4 : 4}; 0,0`, dur: `${bubble.animationDuration}s`, begin: `${bubble.animationDelay}s`, repeatCount: "indefinite", calcMode: "spline", keySplines: "0.4 0 0.6 1; 0.4 0 0.6 1", keyTimes: "0; 0.5; 1" }))))),
+                React.createElement("circle", { cx: "50", cy: "50", r: "50", fill: `url(#base-gradient-${sanitizedSeed})` }),
+                React.createElement("ellipse", { cx: highlight.cx, cy: highlight.cy, rx: highlight.rx, ry: highlight.ry, fill: `url(#${highlight.id})`, style: {
+                        mixBlendMode: "screen",
+                    } }, animated && (React.createElement(React.Fragment, null,
+                    React.createElement("animateTransform", { attributeName: "transform", type: "translate", values: `0,0; ${highlight.cx > 50 ? -3 : 3},${highlight.cy > 50 ? -2.5 : 2.5}; 0,0`, dur: "5s", begin: "0.5s", repeatCount: "indefinite", calcMode: "spline", keySplines: "0.4 0 0.6 1; 0.4 0 0.6 1", keyTimes: "0; 0.5; 1" }),
+                    React.createElement("animate", { attributeName: "opacity", values: `0.2; ${highlight.opacity}; 0.2`, dur: "3s", begin: "0s", repeatCount: "indefinite" })))),
+                borderWidth > 0 && (React.createElement(React.Fragment, null,
+                    React.createElement("circle", { cx: "50", cy: "50", r: "49", fill: "none", stroke: borderColor, strokeWidth: borderWidth }),
+                    React.createElement("circle", { cx: "50", cy: "50", r: "47.5", fill: "none", stroke: "rgba(255, 255, 255, 0.4)", strokeWidth: "1" })))))));
 };
 
 export { Marble };

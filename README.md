@@ -42,6 +42,23 @@ import { Marble } from 'marbles'
   animated={true}
 />
 
+// Spinning marble
+<Marble
+  seed="spinning-marble"
+  size={120}
+  variant="primary"
+  rotate={true}
+/>
+
+// Both animated and spinning
+<Marble
+  seed="full-animation"
+  size={140}
+  variant="secondary"
+  animated={true}
+  rotate={true}
+/>
+
 // Custom border styling
 <Marble
   seed="custom-border"
@@ -67,6 +84,7 @@ import { Marble } from 'marbles'
 | `className`   | `string`                                 | `""`                       | Additional CSS classes to apply            |
 | `variant`     | `"primary" \| "secondary" \| "tertiary"` | `"primary"`                | Color variant to use                       |
 | `animated`    | `boolean`                                | `false`                    | Whether to enable gentle animations        |
+| `rotate`      | `boolean`                                | `false`                    | Whether to enable spinning rotation        |
 | `borderWidth` | `number`                                 | `30`                       | Width of the border (0-30, 0 = no border)  |
 | `borderColor` | `string`                                 | `"rgba(255, 255, 255, 1)"` | Color of the border (any CSS color format) |
 
@@ -188,6 +206,12 @@ When `animated={true}`:
 - **Opacity Pulsing**: Highlight opacity pulses from 20% to full over 3 seconds
 - **Staggered Timing**: Each element has randomized delays and durations
 - **Smooth Easing**: Uses spline-based easing for natural movement
+
+When `rotate={true}`:
+
+- **Spinning Motion**: Entire marble rotates 360 degrees continuously over 4 seconds
+- **Smooth Rotation**: Linear rotation animation with no easing for consistent speed
+- **Independent Animation**: Rotation works independently and can be combined with `animated={true}`
 
 ## How It Works
 
