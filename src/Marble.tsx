@@ -190,7 +190,7 @@ export const Marble = ({
               attributeName="transform"
               type="rotate"
               values="0 50 50; 360 50 50"
-              dur="4s"
+              dur="16s"
               repeatCount="indefinite"
             />
           )}

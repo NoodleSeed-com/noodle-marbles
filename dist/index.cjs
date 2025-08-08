@@ -120,7 +120,7 @@ const Marble = ({ size = 100, seed = "default", className = "", variant = "prima
                     React__namespace.createElement("stop", { offset: "60%", stopColor: "#ffffff", stopOpacity: highlight.opacity * 0.5 }),
                     React__namespace.createElement("stop", { offset: "100%", stopColor: "#ffffff", stopOpacity: "0" }))),
             React__namespace.createElement("g", null,
-                rotate && (React__namespace.createElement("animateTransform", { attributeName: "transform", type: "rotate", values: "0 50 50; 360 50 50", dur: "4s", repeatCount: "indefinite" })),
+                rotate && (React__namespace.createElement("animateTransform", { attributeName: "transform", type: "rotate", values: "0 50 50; 360 50 50", dur: "16s", repeatCount: "indefinite" })),
                 React__namespace.createElement("circle", { cx: "50", cy: "50", r: "50", fill: variant === "primary"
                         ? "#e0f7fa"
                         : variant === "secondary"
