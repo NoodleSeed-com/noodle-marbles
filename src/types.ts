@@ -1,4 +1,14 @@
 /**
+ * Custom color palette for marbles
+ */
+export interface CustomColorPalette {
+  /** Array of exactly 3 colors for gradient effects */
+  colors: [string, string, string];
+  /** Optional name/identifier for the palette */
+  name?: string;
+}
+
+/**
  * Props for the Marble component
  */
 export interface MarbleProps {
@@ -10,6 +20,8 @@ export interface MarbleProps {
   className?: string;
   /** Color variant to use (default: "primary") */
   variant?: "primary" | "secondary" | "tertiary";
+  /** Custom color palettes - takes precedence over variant when provided */
+  customColors?: CustomColorPalette[];
   /** Whether to enable gentle animations (default: false) */
   animated?: boolean;
   /** Whether to enable spinning rotation animation (default: false) */

@@ -1,6 +1,6 @@
 import * as React from "react";
 import clsx from "clsx";
-import { MarbleProps, Bubble, Highlight } from "./types";
+import { MarbleProps, Bubble, Highlight, CustomColorPalette } from "./types";
 
 // Color palette extracted from the reference images
 const BUBBLE_COLORS = {
@@ -41,19 +41,35 @@ class SeededRandom {
   }
 }
 
-const generateBubbles = (seed: number, variant: string): Bubble[] => {
+const generateBubbles = (
+  seed: number,
+  variant: string,
+  customColors?: CustomColorPalette[]
+): Bubble[] => {
   const rng = new SeededRandom(seed);
   const bubbles: Bubble[] = [];
 
-  // Define color schemes for each variant
-  const colorSchemes = {
-    primary: [BUBBLE_COLORS.teal, BUBBLE_COLORS.pink, BUBBLE_COLORS.white],
-    secondary: [BUBBLE_COLORS.pink, BUBBLE_COLORS.purple, BUBBLE_COLORS.white],
-    tertiary: [BUBBLE_COLORS.purple, BUBBLE_COLORS.teal, BUBBLE_COLORS.white],
-  };
+  let schemes: string[][];
 
-  const schemes =
-    colorSchemes[variant as keyof typeof colorSchemes] || colorSchemes.primary;
+  if (customColors && customColors.length > 0) {
+    // Use custom color palettes
+    schemes = customColors.map((palette) => palette.colors);
+  } else {
+    // Define color schemes for each variant (existing behavior)
+    const colorSchemes = {
+      primary: [BUBBLE_COLORS.teal, BUBBLE_COLORS.pink, BUBBLE_COLORS.white],
+      secondary: [
+        BUBBLE_COLORS.pink,
+        BUBBLE_COLORS.purple,
+        BUBBLE_COLORS.white,
+      ],
+      tertiary: [BUBBLE_COLORS.purple, BUBBLE_COLORS.teal, BUBBLE_COLORS.white],
+    };
+
+    schemes =
+      colorSchemes[variant as keyof typeof colorSchemes] ||
+      colorSchemes.primary;
+  }
 
   // Generate 4-6 bubbles for layered effect
   const bubbleCount = Math.floor(rng.range(4, 7));
@@ -95,6 +111,7 @@ export const Marble = ({
   seed = "default",
   className = "",
   variant = "primary",
+  customColors,
   animated = false,
   rotate = false,
   borderWidth = 30,
@@ -107,8 +124,8 @@ export const Marble = ({
     [sanitizedSeed]
   );
   const bubbles = React.useMemo(
-    () => generateBubbles(numericSeed, variant),
-    [numericSeed, variant]
+    () => generateBubbles(numericSeed, variant, customColors),
+    [numericSeed, variant, customColors]
   );
   const highlight = React.useMemo(
     () => generateHighlight(numericSeed),

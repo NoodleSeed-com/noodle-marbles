@@ -56,16 +56,29 @@ class SeededRandom {
         return min + this.next() * (max - min);
     }
 }
-const generateBubbles = (seed, variant) => {
+const generateBubbles = (seed, variant, customColors) => {
     const rng = new SeededRandom(seed);
     const bubbles = [];
-    // Define color schemes for each variant
-    const colorSchemes = {
-        primary: [BUBBLE_COLORS.teal, BUBBLE_COLORS.pink, BUBBLE_COLORS.white],
-        secondary: [BUBBLE_COLORS.pink, BUBBLE_COLORS.purple, BUBBLE_COLORS.white],
-        tertiary: [BUBBLE_COLORS.purple, BUBBLE_COLORS.teal, BUBBLE_COLORS.white],
-    };
-    const schemes = colorSchemes[variant] || colorSchemes.primary;
+    let schemes;
+    if (customColors && customColors.length > 0) {
+        // Use custom color palettes
+        schemes = customColors.map((palette) => palette.colors);
+    }
+    else {
+        // Define color schemes for each variant (existing behavior)
+        const colorSchemes = {
+            primary: [BUBBLE_COLORS.teal, BUBBLE_COLORS.pink, BUBBLE_COLORS.white],
+            secondary: [
+                BUBBLE_COLORS.pink,
+                BUBBLE_COLORS.purple,
+                BUBBLE_COLORS.white,
+            ],
+            tertiary: [BUBBLE_COLORS.purple, BUBBLE_COLORS.teal, BUBBLE_COLORS.white],
+        };
+        schemes =
+            colorSchemes[variant] ||
+                colorSchemes.primary;
+    }
     // Generate 4-6 bubbles for layered effect
     const bubbleCount = Math.floor(rng.range(4, 7));
     for (let i = 0; i < bubbleCount; i++) {
@@ -96,11 +109,11 @@ const generateHighlight = (seed) => {
         opacity: rng.range(0.6, 0.8), // More prominent opacity
     };
 };
-const Marble = ({ size = 100, seed = "default", className = "", variant = "primary", animated = false, rotate = false, borderWidth = 30, borderColor = "rgba(255, 255, 255, 1)", }) => {
+const Marble = ({ size = 100, seed = "default", className = "", variant = "primary", customColors, animated = false, rotate = false, borderWidth = 30, borderColor = "rgba(255, 255, 255, 1)", }) => {
     // Sanitize seed by replacing spaces with dashes to prevent SVG ID issues
     const sanitizedSeed = React__namespace.useMemo(() => seed.replace(/\s+/g, "-"), [seed]);
     const numericSeed = React__namespace.useMemo(() => stringToHash(sanitizedSeed), [sanitizedSeed]);
-    const bubbles = React__namespace.useMemo(() => generateBubbles(numericSeed, variant), [numericSeed, variant]);
+    const bubbles = React__namespace.useMemo(() => generateBubbles(numericSeed, variant, customColors), [numericSeed, variant, customColors]);
     const highlight = React__namespace.useMemo(() => generateHighlight(numericSeed), [numericSeed]);
     return (React__namespace.createElement("div", { className: clsx("relative overflow-hidden rounded-full", className), style: {
             width: size,

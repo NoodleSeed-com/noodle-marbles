@@ -1,2 +1,7 @@
 export { Marble } from "./Marble";
-export type { MarbleProps, Bubble, Highlight } from "./types";
+export type {
+  MarbleProps,
+  Bubble,
+  Highlight,
+  CustomColorPalette,
+} from "./types";
