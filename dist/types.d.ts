@@ -1,13 +1,4 @@
 /**
- * Custom color palette for marbles
- */
-export interface CustomColorPalette {
-    /** Array of exactly 3 colors for gradient effects */
-    colors: [string, string, string];
-    /** Optional name/identifier for the palette */
-    name?: string;
-}
-/**
  * Props for the Marble component
  */
 export interface MarbleProps {
@@ -17,10 +8,14 @@ export interface MarbleProps {
     seed?: string;
     /** Additional CSS classes to apply */
     className?: string;
-    /** Color variant to use (default: "primary") */
+    /** Color variant to use when no color prop provided (default: "primary") */
     variant?: "primary" | "secondary" | "tertiary";
-    /** Custom color palettes - takes precedence over variant when provided */
-    customColors?: CustomColorPalette[];
+    /** Brand color(s) - single color or array. Generates harmonies automatically */
+    color?: string | string[];
+    /** Type of color harmony to generate (default: "triadic") */
+    harmonyType?: "triadic" | "analogous" | "complementary" | "monochromatic";
+    /** Blend mode for bubble layering (default: "multiply") */
+    blendMode?: "normal" | "multiply" | "overlay" | "soft-light" | "hard-light" | "color-dodge" | "color-burn" | "darken" | "lighten" | "difference" | "exclusion";
     /** Whether to enable gentle animations (default: false) */
     animated?: boolean;
     /** Whether to enable spinning rotation animation (default: false) */
@@ -43,6 +38,11 @@ export interface Bubble {
     animationDuration?: number;
     animationDelay?: number;
     animationDirection?: "normal" | "reverse" | "alternate";
+    gradientPattern?: {
+        cx: string;
+        cy: string;
+        r: string;
+    };
 }
 /**
  * Internal interface for highlight data

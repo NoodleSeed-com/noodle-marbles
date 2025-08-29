@@ -1,6 +1,6 @@
 import * as React from "react";
 import clsx from "clsx";
-import { MarbleProps, Bubble, Highlight, CustomColorPalette } from "./types";
+import { MarbleProps, Bubble, Highlight } from "./types";
 
 // Color palette extracted from the reference images
 const BUBBLE_COLORS = {
@@ -8,6 +8,195 @@ const BUBBLE_COLORS = {
   pink: ["#fbc0c4", "#f8bbd9", "#f48fb1"],
   purple: ["#ad9db5", "#ce93d8", "#ba68c8"],
   white: ["#ffffff", "#f5f5f5", "#e8eaf6"],
+};
+
+// Gradient patterns for varied visual effects
+const GRADIENT_PATTERNS = [
+  { cx: "50%", cy: "30%", r: "70%" }, // Center-out radial (classic)
+  { cx: "30%", cy: "40%", r: "80%" }, // Off-center radial (dynamic)
+  { cx: "50%", cy: "20%", r: "60%" }, // Top-heavy radial (depth)
+  { cx: "70%", cy: "50%", r: "75%" }, // Side-lit radial (dramatic)
+  { cx: "50%", cy: "70%", r: "65%" }, // Bottom-up radial (grounded)
+];
+
+// Color validation and utility functions
+const isValidHexColor = (color: string): boolean => {
+  return /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(color);
+};
+
+const generateFallbackColor = (): string => {
+  const fallbacks = ["#6366f1", "#8b5cf6", "#06b6d4", "#10b981", "#f59e0b"];
+  return fallbacks[Math.floor(Math.random() * fallbacks.length)];
+};
+
+const validateAndNormalizeColors = (input: string | string[]): string[] => {
+  const colors = Array.isArray(input) ? input : [input];
+  const validColors: string[] = [];
+
+  colors.forEach((color) => {
+    if (isValidHexColor(color)) {
+      validColors.push(color);
+    } else {
+      if (process.env.NODE_ENV === "development") {
+        console.warn(`Invalid color "${color}", using fallback`);
+      }
+      validColors.push(generateFallbackColor());
+    }
+  });
+
+  // Ensure at least one color
+  if (validColors.length === 0) {
+    if (process.env.NODE_ENV === "development") {
+      console.warn("No valid colors provided, using default");
+    }
+    return ["#6366f1"]; // Default brand-safe blue
+  }
+
+  return validColors;
+};
+
+// Color conversion utilities
+const hexToHsl = (hex: string): { h: number; s: number; l: number } => {
+  const r = parseInt(hex.slice(1, 3), 16) / 255;
+  const g = parseInt(hex.slice(3, 5), 16) / 255;
+  const b = parseInt(hex.slice(5, 7), 16) / 255;
+
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  let h = 0;
+  let s = 0;
+  const l = (max + min) / 2;
+
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r:
+        h = (g - b) / d + (g < b ? 6 : 0);
+        break;
+      case g:
+        h = (b - r) / d + 2;
+        break;
+      case b:
+        h = (r - g) / d + 4;
+        break;
+    }
+    h /= 6;
+  }
+
+  return { h: h * 360, s, l };
+};
+
+const hslToHex = (h: number, s: number, l: number): string => {
+  h = ((h % 360) + 360) % 360; // Normalize hue
+  s = Math.max(0, Math.min(1, s)); // Clamp saturation
+  l = Math.max(0, Math.min(1, l)); // Clamp lightness
+
+  const c = (1 - Math.abs(2 * l - 1)) * s;
+  const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+  const m = l - c / 2;
+  let r = 0,
+    g = 0,
+    b = 0;
+
+  if (0 <= h && h < 60) {
+    r = c;
+    g = x;
+    b = 0;
+  } else if (60 <= h && h < 120) {
+    r = x;
+    g = c;
+    b = 0;
+  } else if (120 <= h && h < 180) {
+    r = 0;
+    g = c;
+    b = x;
+  } else if (180 <= h && h < 240) {
+    r = 0;
+    g = x;
+    b = c;
+  } else if (240 <= h && h < 300) {
+    r = x;
+    g = 0;
+    b = c;
+  } else if (300 <= h && h < 360) {
+    r = c;
+    g = 0;
+    b = x;
+  }
+
+  const toHex = (n: number) => {
+    const hex = Math.round((n + m) * 255).toString(16);
+    return hex.length === 1 ? "0" + hex : hex;
+  };
+
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+};
+
+// Color harmony generation functions
+const generateTriadicHarmony = (baseColor: string): string[] => {
+  const hsl = hexToHsl(baseColor);
+  return [
+    baseColor,
+    hslToHex((hsl.h + 120) % 360, hsl.s, hsl.l),
+    hslToHex((hsl.h + 240) % 360, hsl.s, hsl.l),
+  ];
+};
+
+const generateAnalogousHarmony = (baseColor: string): string[] => {
+  const hsl = hexToHsl(baseColor);
+  return [
+    hslToHex((hsl.h - 30 + 360) % 360, hsl.s, hsl.l),
+    baseColor,
+    hslToHex((hsl.h + 30) % 360, hsl.s, hsl.l),
+  ];
+};
+
+const generateComplementaryHarmony = (baseColor: string): string[] => {
+  const hsl = hexToHsl(baseColor);
+  return [
+    baseColor,
+    hslToHex((hsl.h + 180) % 360, hsl.s, hsl.l),
+    hslToHex(hsl.h, hsl.s * 0.3, 0.9), // Neutral tint
+  ];
+};
+
+const generateMonochromaticHarmony = (baseColor: string): string[] => {
+  const hsl = hexToHsl(baseColor);
+  return [
+    hslToHex(hsl.h, hsl.s, Math.min(hsl.l + 0.3, 0.9)), // Lighter
+    baseColor,
+    hslToHex(hsl.h, hsl.s, Math.max(hsl.l - 0.3, 0.1)), // Darker
+  ];
+};
+
+const generateColorHarmonies = (
+  colors: string[],
+  harmonyType: string = "triadic"
+): string[][] => {
+  return colors.map((color) => {
+    switch (harmonyType) {
+      case "triadic":
+        return generateTriadicHarmony(color);
+      case "analogous":
+        return generateAnalogousHarmony(color);
+      case "complementary":
+        return generateComplementaryHarmony(color);
+      case "monochromatic":
+        return generateMonochromaticHarmony(color);
+      default:
+        return generateTriadicHarmony(color);
+    }
+  });
+};
+
+const generateBubbleGradient = (baseColor: string): string[] => {
+  const hsl = hexToHsl(baseColor);
+  return [
+    hslToHex(hsl.h, hsl.s * 0.7, Math.min(hsl.l + 0.2, 0.9)), // Light center
+    baseColor, // Mid
+    hslToHex(hsl.h, hsl.s * 1.2, Math.max(hsl.l - 0.2, 0.1)), // Dark edge
+  ];
 };
 
 // Convert string to a numeric hash
@@ -44,19 +233,29 @@ class SeededRandom {
 const generateBubbles = (
   seed: number,
   variant: string,
-  customColors?: CustomColorPalette[]
+  color?: string | string[],
+  harmonyType: string = "triadic"
 ): Bubble[] => {
   const rng = new SeededRandom(seed);
   const bubbles: Bubble[] = [];
 
-  let schemes: string[][];
+  let colorSchemes: string[][];
 
-  if (customColors && customColors.length > 0) {
-    // Use custom color palettes
-    schemes = customColors.map((palette) => palette.colors);
+  if (color) {
+    // Use new color harmony system
+    const validatedColors = validateAndNormalizeColors(color);
+    const harmonies = generateColorHarmonies(validatedColors, harmonyType);
+
+    // Create color schemes from harmonies
+    colorSchemes = [];
+    harmonies.forEach((harmony) => {
+      harmony.forEach((harmonyColor) => {
+        colorSchemes.push(generateBubbleGradient(harmonyColor));
+      });
+    });
   } else {
-    // Define color schemes for each variant (existing behavior)
-    const colorSchemes = {
+    // Fallback to variant system
+    const variantSchemes = {
       primary: [BUBBLE_COLORS.teal, BUBBLE_COLORS.pink, BUBBLE_COLORS.white],
       secondary: [
         BUBBLE_COLORS.pink,
@@ -66,25 +265,28 @@ const generateBubbles = (
       tertiary: [BUBBLE_COLORS.purple, BUBBLE_COLORS.teal, BUBBLE_COLORS.white],
     };
 
-    schemes =
-      colorSchemes[variant as keyof typeof colorSchemes] ||
-      colorSchemes.primary;
+    colorSchemes =
+      variantSchemes[variant as keyof typeof variantSchemes] ||
+      variantSchemes.primary;
   }
 
   // Generate 4-6 bubbles for layered effect
   const bubbleCount = Math.floor(rng.range(4, 7));
 
   for (let i = 0; i < bubbleCount; i++) {
+    const gradientPattern = GRADIENT_PATTERNS[i % GRADIENT_PATTERNS.length];
+
     const bubble: Bubble = {
       id: `bubble-${seed}-${i}`,
       cx: rng.range(20, 80), // Position as percentage
       cy: rng.range(20, 80),
       r: rng.range(25, 60), // Radius as percentage
-      colors: schemes[i % schemes.length],
-      opacity: rng.range(0.3, 0.8),
+      colors: colorSchemes[i % colorSchemes.length],
+      opacity: rng.range(0.4, 0.9),
       animationDuration: rng.range(3, 8), // 3-8 seconds for faster movement
       animationDelay: rng.range(0, 2), // 0-2 second delay
       animationDirection: rng.next() > 0.5 ? "alternate" : "normal",
+      gradientPattern, // Add gradient pattern for varied effects
     };
     bubbles.push(bubble);
   }
@@ -111,7 +313,9 @@ export const Marble = ({
   seed = "default",
   className = "",
   variant = "primary",
-  customColors,
+  color,
+  harmonyType = "triadic",
+  blendMode = "multiply",
   animated = false,
   rotate = false,
   borderWidth = 30,
@@ -124,8 +328,8 @@ export const Marble = ({
     [sanitizedSeed]
   );
   const bubbles = React.useMemo(
-    () => generateBubbles(numericSeed, variant, customColors),
-    [numericSeed, variant, customColors]
+    () => generateBubbles(numericSeed, variant, color, harmonyType),
+    [numericSeed, variant, color, harmonyType]
   );
   const highlight = React.useMemo(
     () => generateHighlight(numericSeed),
@@ -147,13 +351,18 @@ export const Marble = ({
         className="absolute inset-0"
       >
         <defs>
+          {/* Circular clipping mask */}
+          <clipPath id={`clip-${sanitizedSeed}`}>
+            <circle cx="50" cy="50" r="50" />
+          </clipPath>
+
           {bubbles.map((bubble) => (
             <radialGradient
               key={bubble.id}
               id={bubble.id}
-              cx="50%"
-              cy="30%"
-              r="70%"
+              cx={bubble.gradientPattern?.cx || "50%"}
+              cy={bubble.gradientPattern?.cy || "30%"}
+              r={bubble.gradientPattern?.r || "70%"}
             >
               <stop
                 offset="0%"
@@ -180,8 +389,8 @@ export const Marble = ({
             cy="50%"
             r="50%"
           >
-            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.4" />
-            <stop offset="100%" stopColor="#f8fafc" stopOpacity="0.1" />
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.2" />
+            <stop offset="100%" stopColor="#f8fafc" stopOpacity="0.05" />
           </radialGradient>
 
           {/* Highlight gradient */}
@@ -201,7 +410,7 @@ export const Marble = ({
         </defs>
 
         {/* Group wrapper for rotation animation */}
-        <g>
+        <g clipPath={`url(#clip-${sanitizedSeed})`}>
           {rotate && (
             <animateTransform
               attributeName="transform"
@@ -218,12 +427,17 @@ export const Marble = ({
             cy="50"
             r="50"
             fill={
-              variant === "primary"
+              color
+                ? bubbles.length > 0
+                  ? bubbles[0].colors[2] // Use the third color of first bubble
+                  : "#f8fafc"
+                : variant === "primary"
                 ? "#e0f7fa"
                 : variant === "secondary"
                 ? "#fce4ec"
                 : "#f3e5f5"
             }
+            opacity={color ? 0.3 : 1}
           />
 
           {/* Render bubbles */}
@@ -235,7 +449,7 @@ export const Marble = ({
               r={bubble.r}
               fill={`url(#${bubble.id})`}
               style={{
-                mixBlendMode: "multiply",
+                mixBlendMode: blendMode,
               }}
             >
               {animated && (

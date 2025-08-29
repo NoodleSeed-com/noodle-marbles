@@ -1,1 +1,1 @@
-{"version":3,"file":"Marble.d.ts","sourceRoot":"","sources":["../src/Marble.tsx"],"names":[],"mappings":"AAAA,OAAO,KAAK,KAAK,MAAM,OAAO,CAAC;AAE/B,OAAO,EAAE,WAAW,EAAyC,MAAM,SAAS,CAAC;AA0G7E,eAAO,MAAM,MAAM,GAAI,+FAUpB,WAAW,sBAkNb,CAAC"}
+{"version":3,"file":"Marble.d.ts","sourceRoot":"","sources":["../src/Marble.tsx"],"names":[],"mappings":"AAAA,OAAO,KAAK,KAAK,MAAM,OAAO,CAAC;AAE/B,OAAO,EAAE,WAAW,EAAqB,MAAM,SAAS,CAAC;AAoTzD,eAAO,MAAM,MAAM,GAAI,gHAYpB,WAAW,sBA4Nb,CAAC"}

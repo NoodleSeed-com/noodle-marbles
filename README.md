@@ -1,108 +1,187 @@
 # Marbles
 
-Beautiful animated marble/bubble gradient components for React. Create stunning, deterministic marble avatars with customizable colors and gentle animations.
+Beautiful animated marble/bubble gradient components for React. Create stunning, deterministic marble avatars with automatic color harmony generation from any brand colors.
 
 ## Features
 
-- 🎨 **Deterministic Generation**: Same seed always produces identical marble
+- 🎨 **Automatic Color Harmony**: Generate beautiful color schemes from any brand color
 - 🔤 **Text-Based Seeds**: Use emails, usernames, or any string as seeds
-- 🎭 **Multiple Variants**: Primary (teal), Secondary (pink), Tertiary (purple)
+- 🌈 **Multiple Harmony Types**: Triadic, analogous, complementary, and monochromatic
 - ✨ **Optional Animations**: Gentle bubble movement and highlight pulsing
 - 📦 **Zero Dependencies**: Only requires React (clsx is optional)
 - 🎯 **TypeScript Support**: Full type safety with exported interfaces
 - 🚀 **Performance Optimized**: Memoized generation functions
 - 📱 **Responsive**: SVG-based for crisp scaling at any size
+- 🎭 **Fallback System**: Automatic color validation with intelligent fallbacks
+- 🔄 **Deterministic Generation**: Same seed always produces identical marble
 
 ## Installation
 
 ```bash
-npm install marbles
+npm install @noodleseed/marbles
 ```
 
 ## Basic Usage
 
 ```tsx
-import { Marble } from 'marbles'
+import { Marble } from '@noodleseed/marbles'
 
-// Basic usage
+// Basic usage with automatic color harmony
 <Marble seed="user@example.com" />
 
-// With custom size and variant
+// With brand color - generates triadic harmony automatically
 <Marble
   seed="john.doe"
+  color="#3b82f6"
   size={120}
-  variant="secondary"
 />
 
-// Animated marble
+// Different harmony types
+<Marble
+  seed="analogous-marble"
+  color="#ef4444"
+  harmonyType="analogous"
+  size={150}
+/>
+
+// Multiple brand colors
+<Marble
+  seed="multi-color"
+  color={["#3b82f6", "#ef4444", "#10b981"]}
+  size={140}
+/>
+
+// Animated marble with custom harmony
 <Marble
   seed="animated-marble"
+  color="#8b5cf6"
+  harmonyType="complementary"
   size={150}
-  variant="tertiary"
   animated={true}
 />
 
-// Spinning marble
+// Spinning marble with monochromatic harmony
 <Marble
   seed="spinning-marble"
+  color="#f59e0b"
+  harmonyType="monochromatic"
   size={120}
-  variant="primary"
-  rotate={true}
-/>
-
-// Both animated and spinning
-<Marble
-  seed="full-animation"
-  size={140}
-  variant="secondary"
-  animated={true}
   rotate={true}
 />
 
 // Custom border styling
 <Marble
   seed="custom-border"
+  color="#ec4899"
   size={120}
   borderWidth={15}
-  borderColor="#ff6b6b"
+  borderColor="#fbbf24"
 />
 
-// No border
+// Fallback to variant when no color provided
 <Marble
-  seed="no-border"
+  seed="fallback-example"
+  variant="secondary"
   size={100}
-  borderWidth={0}
 />
 ```
 
 ## Props
 
-| Prop          | Type                                     | Default                    | Description                                |
-| ------------- | ---------------------------------------- | -------------------------- | ------------------------------------------ |
-| `size`        | `number`                                 | `100`                      | Size of the marble in pixels               |
-| `seed`        | `string`                                 | `"default"`                | Seed string for deterministic generation   |
-| `className`   | `string`                                 | `""`                       | Additional CSS classes to apply            |
-| `variant`     | `"primary" \| "secondary" \| "tertiary"` | `"primary"`                | Color variant to use                       |
-| `animated`    | `boolean`                                | `false`                    | Whether to enable gentle animations        |
-| `rotate`      | `boolean`                                | `false`                    | Whether to enable spinning rotation        |
-| `borderWidth` | `number`                                 | `30`                       | Width of the border (0-30, 0 = no border)  |
-| `borderColor` | `string`                                 | `"rgba(255, 255, 255, 1)"` | Color of the border (any CSS color format) |
+| Prop          | Type                                                             | Default                    | Description                                |
+| ------------- | ---------------------------------------------------------------- | -------------------------- | ------------------------------------------ |
+| `size`        | `number`                                                         | `100`                      | Size of the marble in pixels               |
+| `seed`        | `string`                                                         | `"default"`                | Seed string for deterministic generation   |
+| `className`   | `string`                                                         | `""`                       | Additional CSS classes to apply            |
+| `color`       | `string \| string[]`                                             | `undefined`                | Brand color(s) for harmony generation      |
+| `harmonyType` | `"triadic" \| "analogous" \| "complementary" \| "monochromatic"` | `"triadic"`                | Type of color harmony to generate          |
+| `variant`     | `"primary" \| "secondary" \| "tertiary"`                         | `"primary"`                | Fallback variant when no color provided    |
+| `blendMode`   | `string`                                                         | `"multiply"`               | CSS blend mode for bubble layering         |
+| `animated`    | `boolean`                                                        | `false`                    | Whether to enable gentle animations        |
+| `rotate`      | `boolean`                                                        | `false`                    | Whether to enable spinning rotation        |
+| `borderWidth` | `number`                                                         | `30`                       | Width of the border (0-30, 0 = no border)  |
+| `borderColor` | `string`                                                         | `"rgba(255, 255, 255, 1)"` | Color of the border (any CSS color format) |
 
-## Color Variants
+## Color Harmony System
 
-### Primary (Teal-dominant)
+### Automatic Harmony Generation
+
+The marble component automatically generates beautiful color harmonies from your brand colors using color theory principles:
+
+#### Triadic Harmony (Default)
+
+Creates a vibrant, balanced palette using colors 120° apart on the color wheel:
+
+```tsx
+<Marble color="#3b82f6" harmonyType="triadic" />
+// Generates: Blue → Red-Orange → Yellow-Green
+```
+
+#### Analogous Harmony
+
+Creates a harmonious, natural palette using adjacent colors:
+
+```tsx
+<Marble color="#ef4444" harmonyType="analogous" />
+// Generates: Red → Red-Orange → Orange
+```
+
+#### Complementary Harmony
+
+Creates high contrast using opposite colors on the color wheel:
+
+```tsx
+<Marble color="#10b981" harmonyType="complementary" />
+// Generates: Green → Red-Purple → Light Green
+```
+
+#### Monochromatic Harmony
+
+Creates a sophisticated palette using different shades of the same hue:
+
+```tsx
+<Marble color="#8b5cf6" harmonyType="monochromatic" />
+// Generates: Purple → Light Purple → Dark Purple
+```
+
+### Multiple Brand Colors
+
+You can provide multiple brand colors for more complex harmonies:
+
+```tsx
+// Uses provided colors directly
+<Marble color={["#3b82f6", "#ef4444", "#10b981"]} />
+
+// Generates harmony from first color if more than 3 provided
+<Marble color={["#3b82f6", "#ef4444", "#10b981", "#f59e0b"]} />
+```
+
+### Color Validation & Fallbacks
+
+The system includes robust color validation:
+
+- **Invalid Colors**: Automatically replaced with generated fallbacks
+- **Insufficient Colors**: Missing colors generated using harmony rules
+- **Malformed Hex**: Corrected or replaced with valid alternatives
+- **Graceful Degradation**: Falls back to variant system if all colors invalid
+
+### Fallback Variants
+
+When no `color` prop is provided, the system uses predefined variants:
+
+#### Primary (Teal-dominant)
 
 - Teal colors: `#00bec1`, `#4dd0e1`, `#80deea`
 - Pink accents: `#fbc0c4`, `#f8bbd9`, `#f48fb1`
 - Background: Light teal (`#e0f7fa`)
 
-### Secondary (Pink-dominant)
+#### Secondary (Pink-dominant)
 
 - Pink colors: `#fbc0c4`, `#f8bbd9`, `#f48fb1`
 - Purple accents: `#ad9db5`, `#ce93d8`, `#ba68c8`
 - Background: Light pink (`#fce4ec`)
 
-### Tertiary (Purple-dominant)
+#### Tertiary (Purple-dominant)
 
 - Purple colors: `#ad9db5`, `#ce93d8`, `#ba68c8`
 - Teal accents: `#00bec1`, `#4dd0e1`, `#80deea`
@@ -110,51 +189,68 @@ import { Marble } from 'marbles'
 
 ## Examples
 
-### User Avatars
+### Brand-Consistent Avatars
 
-Perfect for generating consistent user avatars:
+Generate avatars that match your brand colors:
 
 ```tsx
-import { Marble } from "marbles";
+import { Marble } from "@noodleseed/marbles";
 
-const UserAvatar = ({ user }) => (
+const BrandAvatar = ({ user, brandColor }) => (
   <Marble
     seed={user.email}
+    color={brandColor}
+    harmonyType="triadic"
     size={64}
-    variant="primary"
     className="border-2 border-white shadow-lg"
   />
 );
+
+// Usage with different brand colors
+<BrandAvatar user={user} brandColor="#3b82f6" /> // Blue theme
+<BrandAvatar user={user} brandColor="#ef4444" /> // Red theme
+<BrandAvatar user={user} brandColor="#10b981" /> // Green theme
 ```
 
-### Category Icons
+### Dynamic Category Icons
 
-Use different variants for different categories:
+Use different harmony types for different categories:
 
 ```tsx
-const CategoryIcon = ({ category }) => (
-  <Marble
-    seed={category.name}
-    size={48}
-    variant={category.type === "tech" ? "primary" : "secondary"}
-    animated={true}
-  />
-);
+const CategoryIcon = ({ category }) => {
+  const harmonyMap = {
+    tech: "triadic",
+    design: "analogous",
+    business: "complementary",
+    personal: "monochromatic",
+  };
+
+  return (
+    <Marble
+      seed={category.name}
+      color={category.brandColor}
+      harmonyType={harmonyMap[category.type]}
+      size={48}
+      animated={true}
+    />
+  );
+};
 ```
 
-### Profile Gallery
+### Multi-Brand Gallery
 
-Create a gallery of animated marbles:
+Create galleries with consistent harmony across different brands:
 
 ```tsx
-const ProfileGallery = ({ users }) => (
+const BrandGallery = ({ brands }) => (
   <div className="flex gap-4">
-    {users.map((user, index) => (
+    {brands.map((brand) => (
       <Marble
-        key={user.id}
-        seed={user.username}
+        key={brand.id}
+        seed={brand.name}
+        color={brand.primaryColor}
+        harmonyType="triadic"
         size={80}
-        variant={["primary", "secondary", "tertiary"][index % 3]}
         animated={true}
         className="hover:scale-110 transition-transform"
       />
@@ -163,26 +259,17 @@ const ProfileGallery = ({ users }) => (
 );
 ```
 
-### Border Customization
+### Rebranding Support
 
-Control the border appearance with `borderWidth` and `borderColor`:
+Perfect for companies going through rebranding:
 
 ```tsx
-// Thin colored borders
-<Marble seed="thin-blue" borderWidth={10} borderColor="#3b82f6" />
-<Marble seed="thin-green" borderWidth={10} borderColor="#10b981" />
+// Before rebrand
+<Marble seed="company" color="#ff6b6b" harmonyType="triadic" />
 
-// Medium borders with transparency
-<Marble seed="medium-red" borderWidth={20} borderColor="rgba(239, 68, 68, 0.8)" />
-
-// Thick gold border
-<Marble seed="thick-gold" borderWidth={25} borderColor="#f59e0b" />
-
-// No border for clean look
-<Marble seed="clean" borderWidth={0} />
-
-// Gradient-like effect with semi-transparent colors
-<Marble seed="gradient" borderWidth={15} borderColor="rgba(139, 92, 246, 0.6)" />
+// After rebrand - same seed, new colors
+<Marble seed="company" color="#3b82f6" harmonyType="triadic" />
+// Maintains same bubble pattern but with new brand colors!
 ```
 
 ## TypeScript
@@ -190,11 +277,14 @@ Control the border appearance with `borderWidth` and `borderColor`:
 The package includes full TypeScript support:
 
 ```tsx
-import { Marble, MarbleProps } from "marbles";
+import { Marble, MarbleProps } from "@noodleseed/marbles";
 
 const CustomMarble: React.FC<MarbleProps> = (props) => {
   return <Marble {...props} />;
 };
+
+// Type-safe harmony types
+type HarmonyType = "triadic" | "analogous" | "complementary" | "monochromatic";
 ```
 
 ## Animation Details
@@ -213,20 +303,67 @@ When `rotate={true}`:
 - **Smooth Rotation**: Linear rotation animation with no easing for consistent speed
 - **Independent Animation**: Rotation works independently and can be combined with `animated={true}`
 
+## Advanced Features
+
+### Varied Gradient Patterns
+
+Each bubble uses one of 5 different gradient patterns for visual variety:
+
+- **Center Focus**: Standard centered gradient
+- **Upper Left**: Gradient focused on upper-left area
+- **Lower Right**: Gradient focused on lower-right area
+- **Off-Center**: Slightly offset gradient center
+- **Wide Spread**: Larger gradient radius for softer effect
+
+### Blend Modes
+
+Control how bubble layers interact:
+
+```tsx
+<Marble
+  color="#3b82f6"
+  blendMode="overlay"     // High contrast
+/>
+<Marble
+  color="#ef4444"
+  blendMode="soft-light"  // Subtle blending
+/>
+<Marble
+  color="#10b981"
+  blendMode="multiply"    // Default, rich colors
+/>
+```
+
+### Deterministic Generation
+
+Same seed + same color always produces identical results:
+
+```tsx
+// These will always look identical
+<Marble seed="user123" color="#3b82f6" />
+<Marble seed="user123" color="#3b82f6" />
+
+// Different seed = different pattern, same colors
+<Marble seed="user456" color="#3b82f6" />
+```
+
 ## How It Works
 
-1. **String Hashing**: Converts seed strings to numeric hashes using a simple hash function
-2. **Seeded Random**: Uses a linear congruential generator for deterministic randomness
-3. **Bubble Generation**: Creates 4-6 bubble layers with random positions, sizes, and colors
-4. **Highlight Generation**: Adds a dynamic white highlight blob for depth
-5. **SVG Rendering**: Renders everything as scalable SVG with radial gradients
+1. **Color Processing**: Validates and normalizes input colors
+2. **Harmony Generation**: Creates color schemes using HSL color space mathematics
+3. **String Hashing**: Converts seed strings to numeric hashes
+4. **Seeded Random**: Uses deterministic randomness for consistent results
+5. **Bubble Generation**: Creates 4-6 bubble layers with varied gradient patterns
+6. **Highlight Generation**: Adds dynamic white highlight blob for depth
+7. **SVG Rendering**: Renders as scalable SVG with radial gradients
 
 ## Performance
 
-- **Memoized Generation**: Bubble and highlight data is memoized based on seed and variant
-- **Efficient Rendering**: Uses SVG for optimal performance and scaling
-- **Small Bundle**: Under 10KB minified
+- **Memoized Generation**: Bubble and highlight data cached based on inputs
+- **Efficient Color Processing**: Optimized HSL/Hex conversions
+- **Small Bundle**: Under 15KB minified
 - **Zero Runtime CSS**: All styles are inline
+- **Deterministic Caching**: Same inputs always return cached results
 
 ## Browser Support
 
@@ -236,13 +373,26 @@ Works in all modern browsers that support:
 - CSS transforms and animations
 - ES2018+ JavaScript features
 
+## Migration from v1.3.x
+
+The new color system is backward compatible:
+
+```tsx
+// v1.3.x - still works
+<Marble variant="primary" seed="user" />
+
+// v1.4.x - new color system
+<Marble color="#3b82f6" seed="user" />
+```
+
 ## Use Cases
 
-- **User Avatars**: Consistent, beautiful avatars for user profiles
-- **Category Icons**: Visual representations for categories, tags, or groups
-- **Decorative Elements**: Add visual interest to cards, headers, or sidebars
+- **Brand-Consistent Avatars**: User avatars matching your brand colors
+- **Dynamic Theming**: Marbles that adapt to theme changes
+- **Multi-Brand Platforms**: Consistent visual language across different brands
+- **Rebranding Support**: Easy color updates during brand transitions
+- **Category Visualization**: Different harmony types for different content types
 - **Loading States**: Animated marbles for loading indicators
-- **Brand Elements**: Consistent visual elements across your application
 
 ## License
 
@@ -250,4 +400,4 @@ MIT © NoodleSeed
 
 ## Contributing
 
-Issues and pull requests are welcome! Please visit our [GitHub repository](https://github.com/NoodleSeed-com/marbles).
+Issues and pull requests are welcome! Please visit our [GitHub repository](https://github.com/NoodleSeed-com/noodle-marbles).
