@@ -1,6 +1,6 @@
 {
   "name": "@noodleseed/marbles",
-  "version": "1.2.4",
+  "version": "1.3.0",
   "type": "module",
   "description": "Beautiful animated marble/bubble gradient components for React",
   "main": "dist/index.cjs",
